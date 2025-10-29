@@ -13,7 +13,7 @@ class NonSupprimeScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        // Filtrer les comptes non supprimés (statut différent de 'ferme')
-        $builder->where('statut', '!=', 'ferme');
+        // Filtrer les comptes non supprimés (soft delete)
+        $builder->whereNull('deleted_at');
     }
 }
