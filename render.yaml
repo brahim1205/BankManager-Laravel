@@ -1,0 +1,68 @@
+services:
+  - type: web
+    name: bankmanager-api
+    runtime: php
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php artisan key:generate
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+    startCommand: |
+      php artisan migrate --force
+      php artisan db:seed --force
+      php artisan l5-swagger:generate
+      php artisan serve --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_NAME
+        value: BankManager
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        fromService:
+          type: web
+          name: bankmanager-api
+          property: host
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: bankmanager-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: bankmanager-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: bankmanager-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: bankmanager-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: bankmanager-db
+          property: password
+      - key: L5_SWAGGER_BASE_PATH
+        fromService:
+          type: web
+          name: bankmanager-api
+          property: host
+      - key: L5_SWAGGER_USE_ABSOLUTE_PATH
+        value: true
+      - key: MAIL_MAILER
+        value: log
+      - key: QUEUE_CONNECTION
+        value: sync
+
+databases:
+  - name: bankmanager-db
+    databaseName: bankmanager
+    user: bankmanager_user
+    plan: starter

@@ -7,8 +7,8 @@
     },
     "servers": [
         {
-            "url": "http://127.0.0.1:8000/api/v1",
-            "description": "Serveur de développement"
+            "url": "https://bankmanager-api.onrender.com/api/v1",
+            "description": "Serveur de production"
         }
     ],
     "paths": {
