@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: bankmanager-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    buildCommand: docker build -t bankmanager-api .
+    startCommand: |
+      docker run -p $PORT:8000 \
+        -e APP_ENV=production \
+        -e APP_KEY=$(openssl rand -base64 32) \
+        -e APP_DEBUG=false \
+        -e DB_CONNECTION=pgsql \
+        -e DB_HOST=$BANKMANAGER_DB_HOST \
+        -e DB_PORT=$BANKMANAGER_DB_PORT \
+        -e DB_DATABASE=$BANKMANAGER_DB_DATABASE \
+        -e DB_USERNAME=$BANKMANAGER_DB_USER \
+        -e DB_PASSWORD=$BANKMANAGER_DB_PASSWORD \
+        -e L5_SWAGGER_USE_ABSOLUTE_PATH=true \
+        -e MAIL_MAILER=log \
+        -e QUEUE_CONNECTION=sync \
+        bankmanager-api \
+        sh -c "php artisan migrate --force && php artisan db:seed --force && php artisan l5-swagger:generate && php artisan serve --host 0.0.0.0 --port 8000"
+    healthCheckPath: /
+    healthCheckTimeout: 300
+    envVars:
+      - key: APP_NAME
+        value: BankManager
+      - key: APP_URL
+        fromService:
+          type: web
+          name: bankmanager-api
+          property: host
+      - key: L5_SWAGGER_BASE_PATH
+        fromService:
+          type: web
+          name: bankmanager-api
+          property: host
+
+databases:
+  - name: bankmanager-db
+    databaseName: bankmanager
+    user: bankmanager_user
+    plan: starter

@@ -16,3 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Route de connexion pour éviter l'erreur du middleware
+Route::get('/login', function () {
+    return response()->json(['message' => 'Veuillez utiliser l\'API pour vous connecter'], 401);
+})->name('login');

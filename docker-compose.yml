@@ -10,8 +10,7 @@ services:
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
-    networks:
-      - laravel
+    network_mode: host
 
   webserver:
     image: nginx:latest
@@ -24,8 +23,7 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       - app
-    networks:
-      - laravel
+    network_mode: host
 
   db:
     image: postgres:16
@@ -39,11 +37,7 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-    networks:
-      - laravel
-
-networks:
-  laravel:
+    network_mode: host
 
 volumes:
   pgdata:

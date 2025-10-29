@@ -5,10 +5,11 @@ FROM php:8.3-fpm
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libonig-dev \
+    libsqlite3-dev \
     unzip \
     git \
     curl \
-    && docker-php-ext-install pdo pdo_pgsql bcmath mbstring \
+    && docker-php-ext-install pdo pdo_pgsql pdo_sqlite bcmath mbstring \
     && rm -rf /var/lib/apt/lists/*
 
 # Installer Composer
