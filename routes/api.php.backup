@@ -1,0 +1,131 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\CompteController;
+use App\Http\Controllers\Api\V1\TransactionController;
+use App\Http\Middleware\LoggingMiddleware;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
+|
+*/
+
+// Routes d'authentification publiques
+Route::post('/login', [App\Http\Controllers\Api\V1\AuthController::class, 'login'])
+    ->name('api.login');
+
+// Routes d'authentification protégées
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [App\Http\Controllers\Api\V1\AuthController::class, 'logout'])
+        ->name('api.logout');
+    Route::get('/user', [App\Http\Controllers\Api\V1\AuthController::class, 'user'])
+        ->name('api.user');
+    Route::post('/refresh', [App\Http\Controllers\Api\V1\AuthController::class, 'refresh'])
+        ->name('api.refresh');
+}); publiques
+Route::post('/login', [App\Http\Controllers\Api\V1\AuthController::class, 'login'])
+    ->name('api.login');
+
+// Routes d'authentification publiques
+Route::post('/login', [App\Http\Controllers\Api\V1\AuthController::class, 'login'])
+    ->name('api.login');
+
+// Routes d'authentification protégées
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [App\Http\Controllers\Api\V1\AuthController::class, 'logout'])
+        ->name('api.logout');
+    Route::get('/user', [App\Http\Controllers\Api\V1\AuthController::class, 'user'])
+        ->name('api.user');
+    Route::post('/refresh', [App\Http\Controllers\Api\V1\AuthController::class, 'refresh'])
+        ->name('api.refresh');
+}); protégées
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [App\Http\Controllers\Api\V1\AuthController::class, 'logout'])
+        ->name('api.logout');
+    Route::get('/user', [App\Http\Controllers\Api\V1\AuthController::class, 'user'])
+        ->name('api.user');
+    Route::post('/refresh', [App\Http\Controllers\Api\V1\AuthController::class, 'refresh'])
+        ->name('api.refresh');
+});
+
+// API Version 1
+Route::prefix('v1')->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/comptes', [App\Http\Controllers\Api\V1\CompteController::class, 'index'])
+            ->name('api.v1.comptes.index');
+    });
+});
+
+// API Version 1
+Route::prefix('v1')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Routes des Comptes
+    |--------------------------------------------------------------------------
+    |
+    | Routes pour la gestion des comptes bancaires
+    | Base URL: /api/v1
+    |
+    */
+
+    Route::middleware(['auth:sanctum', LoggingMiddleware::class])->group(function () {
+        /**
+         * Lister tous les comptes
+         *
+         * Récupère la liste paginée des comptes non archivés
+         * Accessible uniquement aux administrateurs
+         */
+        Route::get('/comptes', [CompteController::class, 'index'])
+            ->name('api.v1.comptes.index')
+            ->middleware('can:viewAny,App\Models\Compte');
+
+        /**
+         * Créer un nouveau compte
+         *
+         * Crée un compte bancaire avec un client (nouveau ou existant)
+         * Envoie les notifications par email et SMS
+         */
+        Route::post('/comptes', [CompteController::class, 'store'])
+            ->name('api.v1.comptes.store');
+
+        /**
+         * Récupérer un compte spécifique
+         *
+         * Admin peut récupérer un compte à partir de l'id
+         * Client peut récupérer un de ses comptes par id
+         */
+        Route::get('/comptes/{compte}', [CompteController::class, 'show'])
+            ->name('api.v1.comptes.show');
+
+        /**
+         * Routes pour les transactions
+         */
+        Route::apiResource('transactions', TransactionController::class)->only(['index', 'store', 'show']);
+
+        /**
+         * Bloquer un compte
+         *
+         * Bloque temporairement un compte avec motif et dates
+         */
+        Route::post('/comptes/{compte}/bloquer', [CompteController::class, 'bloquer'])
+            ->name('api.v1.comptes.bloquer');
+    });
+
+    Route::middleware(['auth:sanctum'])->group(function () {
+        /**
+         * Lister les comptes du client connecté
+         *
+         * Récupère la liste paginée des comptes du client authentifié
+         */
+        Route::get('/mes-comptes', [CompteController::class, 'mesComptes'])
+            ->name('api.v1.comptes.mes-comptes');
+    });
+});
