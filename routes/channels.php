@@ -16,3 +16,8 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+
+Broadcast::channel('transactions.{clientId}', function ($user, $clientId) {
+    return $user->isAdmin() || $user->client_id === (int) $clientId;
+});
