@@ -1,12 +1,11 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ClientController;
 use App\Http\Controllers\Api\V1\CompteController;
 use App\Http\Controllers\Api\V1\TransactionController;
-use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Middleware\LoggingMiddleware;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +22,10 @@ use App\Http\Middleware\LoggingMiddleware;
 
 // API Version 1
 Route::prefix('v1')->group(function () {
+
+    // Health check endpoint
+    Route::get('/status', [AuthController::class, 'status'])
+        ->name('api.v1.status');
 
     // Routes d'authentification publiques dans v1
     Route::post('/login', [AuthController::class, 'login'])

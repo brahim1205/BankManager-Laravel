@@ -160,4 +160,37 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
         ], 'Token rafraîchi avec succès');
     }
+
+    /**
+     * Health check endpoint
+     *
+     * @OA\Get(
+     *     path="/status",
+     *     summary="Vérifier l'état de l'API",
+     *     tags={"Health Check"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="API opérationnelle",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="API opérationnelle"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="status", type="string", example="healthy"),
+     *                 @OA\Property(property="timestamp", type="string", format="date-time"),
+     *                 @OA\Property(property="version", type="string", example="1.0.0"),
+     *                 @OA\Property(property="environment", type="string", example="production")
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function status()
+    {
+        return $this->successResponse([
+            'status' => 'healthy',
+            'timestamp' => now()->toISOString(),
+            'version' => config('app.version', '1.0.0'),
+            'environment' => config('app.env'),
+        ], 'API opérationnelle');
+    }
 }
