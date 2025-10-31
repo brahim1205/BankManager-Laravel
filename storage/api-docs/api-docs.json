@@ -209,6 +209,59 @@
                 ]
             }
         },
+        "/status": {
+            "get": {
+                "tags": [
+                    "Health Check"
+                ],
+                "summary": "Vérifier l'état de l'API",
+                "description": "Health check endpoint",
+                "operationId": "7622da00472de8ec21580c644b9dc73d",
+                "responses": {
+                    "200": {
+                        "description": "API opérationnelle",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "API opérationnelle"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "healthy"
+                                                },
+                                                "timestamp": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "version": {
+                                                    "type": "string",
+                                                    "example": "1.0.0"
+                                                },
+                                                "environment": {
+                                                    "type": "string",
+                                                    "example": "production"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/comptes": {
             "get": {
                 "tags": [
@@ -1291,6 +1344,10 @@
         {
             "name": "Transactions",
             "description": "Gestion des transactions bancaires"
+        },
+        {
+            "name": "Health Check",
+            "description": "Health Check"
         }
     ]
 }
