@@ -95,7 +95,7 @@ Route::prefix('v1')->group(function () {
     |
     */
 
-    Route::middleware([LoggingMiddleware::class, 'request.logger'])->group(function () {
+    Route::middleware(['auth:api', LoggingMiddleware::class, 'request.logger'])->group(function () {
         /**
          * Lister tous les comptes
          *
@@ -124,9 +124,29 @@ Route::prefix('v1')->group(function () {
             ->name('api.v1.comptes.show');
 
         /**
+         * Mettre à jour un compte
+         *
+         * Met à jour partiellement les informations d'un compte
+         */
+        Route::patch('/comptes/{compte}', [CompteController::class, 'update'])
+            ->name('api.v1.comptes.update');
+
+        /**
          * Routes pour les transactions
          */
         Route::apiResource('transactions', TransactionController::class)->only(['index', 'store', 'show']);
+
+        /**
+         * Statistiques des comptes
+         */
+        Route::get('/comptes/stats', [CompteController::class, 'stats'])
+            ->name('api.v1.comptes.stats');
+
+        /**
+         * Statistiques des clients
+         */
+        Route::get('/clients/stats', [ClientController::class, 'stats'])
+            ->name('api.v1.clients.stats');
 
         /**
          * Bloquer un compte

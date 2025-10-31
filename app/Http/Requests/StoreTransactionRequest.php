@@ -26,8 +26,8 @@ class StoreTransactionRequest extends FormRequest
             'montant' => 'required|numeric|min:100|max:10000000',
             'devise' => 'string|size:3|default:XOF',
             'description' => 'nullable|string|max:500',
-            'compte_source_id' => 'required_if:type,transfert,virement|uuid|exists:comptes,id',
-            'compte_destination_id' => 'required_if:type,transfert,virement|uuid|exists:comptes,id|different:compte_source_id',
+            'compte_source_id' => 'required_if:type,retrait,transfert,virement|uuid|exists:comptes,id',
+            'compte_destination_id' => 'required_if:type,depot,transfert,virement|uuid|exists:comptes,id|different:compte_source_id',
             'date_transaction' => 'date|before_or_equal:today|after:2020-01-01',
         ];
     }
@@ -48,7 +48,7 @@ class StoreTransactionRequest extends FormRequest
             'montant.max' => 'Le montant maximum est de 10 000 000 FCFA.',
             'devise.size' => 'La devise doit contenir exactement 3 caractères.',
             'description.max' => 'La description ne doit pas dépasser 500 caractères.',
-            'compte_source_id.required_if' => 'Le compte source est obligatoire pour les transferts et virements.',
+            'compte_source_id.required_if' => 'Le compte source est obligatoire pour les retraits, transferts et virements.',
             'compte_source_id.uuid' => 'Le compte source doit être un UUID valide.',
             'compte_source_id.exists' => 'Le compte source n\'existe pas.',
             'compte_destination_id.required_if' => 'Le compte destination est obligatoire pour les transferts et virements.',

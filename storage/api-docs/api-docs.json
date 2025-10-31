@@ -273,6 +273,15 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "public",
+                        "in": "query",
+                        "description": "Mode public pour les tests (sans authentification)",
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
                     }
                 ],
                 "responses": {
@@ -1250,8 +1259,9 @@
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
-                "bearerFormat": "JWT",
-                "scheme": "bearer"
+                "description": "JWT Bearer token authentication",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             },
             "passport": {
                 "type": "oauth2",

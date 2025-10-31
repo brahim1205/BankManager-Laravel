@@ -24,14 +24,20 @@ class UpdateCompteRequest extends FormRequest
         $compteId = $this->route('compte')?->id ?? $this->route('compte');
 
         return [
-            'libelle' => 'required|string|max:255',
-            'type' => 'required|in:courant,epargne,entreprise,joint',
-            'solde' => 'numeric|min:0',
-            'devise' => 'string|size:3',
-            'client_id' => 'required|exists:clients,id',
-            'date_ouverture' => 'date|before_or_equal:today',
-            'statut' => 'in:actif,bloque,ferme',
+            'libelle' => 'sometimes|required|string|max:255',
+            'type' => 'sometimes|required|in:courant,epargne,entreprise,joint',
+            'solde' => 'sometimes|numeric|min:0',
+            'devise' => 'sometimes|string|size:3',
+            'client_id' => 'sometimes|required|exists:clients,id',
+            'date_ouverture' => 'sometimes|date|before_or_equal:today',
+            'statut' => 'sometimes|in:actif,bloque,ferme',
             'description' => 'nullable|string|max:1000',
+            'client' => 'sometimes|array',
+            'client.nom' => 'sometimes|string|max:255',
+            'client.prenom' => 'sometimes|string|max:255',
+            'client.email' => 'sometimes|email|unique:clients,email,' . ($this->route('compte')?->client_id ?? ''),
+            'client.telephone' => 'sometimes|string|regex:/^\+221\d{9}$/',
+            'client.nci' => 'sometimes|string|regex:/^[12]\d{12}$/',
         ];
     }
 

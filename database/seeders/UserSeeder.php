@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@bankmanager.com',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
+            'role' => 'admin',
         ]);
 
         // Créer quelques utilisateurs de test

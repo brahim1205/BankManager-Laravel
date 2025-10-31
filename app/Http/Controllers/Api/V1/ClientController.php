@@ -151,4 +151,36 @@ class ClientController extends Controller
             );
         }
     }
+
+    /**
+     * Get client statistics
+     */
+    public function stats(): JsonResponse
+    {
+        try {
+            $totalClients = \App\Models\Client::count();
+            $clientsActifs = \App\Models\Client::whereHas('comptes', function($query) {
+                $query->where('statut', 'actif');
+            })->count();
+
+            $stats = [
+                'total_clients' => $totalClients,
+                'clients_actifs' => $clientsActifs,
+                'clients_inactifs' => $totalClients - $clientsActifs,
+                'date_generation' => now()->toISOString()
+            ];
+
+            return $this->successResponse(
+                $stats,
+                'Statistiques des clients récupérées avec succès',
+                200
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse(
+                'Erreur lors de la récupération des statistiques',
+                500,
+                $e->getMessage()
+            );
+        }
+    }
 }

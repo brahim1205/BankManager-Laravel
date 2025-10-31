@@ -194,8 +194,6 @@ class TransactionController extends Controller
                 201
             );
 
-        } catch (\InvalidArgumentException $e) {
-            return $this->errorResponse($e->getMessage(), 422);
         } catch (\Exception $e) {
             return $this->errorResponse(
                 'Erreur lors de la création de la transaction: ' . $e->getMessage(),

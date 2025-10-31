@@ -9,92 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class TransactionService
 {
-    /**
-     * Valider les règles métier d'une transaction
-     */
-    public function validateBusinessRules(array $data): void
-    {
-        $type = $data['type'];
-        $montant = $data['montant'];
-        $compteSourceId = $data['compte_source_id'] ?? null;
-        $compteDestinationId = $data['compte_destination_id'] ?? null;
 
-        switch ($type) {
-            case 'retrait':
-                $this->validateRetrait($compteSourceId, $montant);
-                break;
-
-            case 'transfert':
-            case 'virement':
-                $this->validateTransfert($compteSourceId, $compteDestinationId, $montant);
-                break;
-
-            case 'depot':
-                $this->validateDepot($compteDestinationId);
-                break;
-        }
-    }
-
-    /**
-     * Validation pour retrait
-     */
-    private function validateRetrait(?string $compteSourceId, float $montant): void
-    {
-        if (!$compteSourceId) {
-            throw new \InvalidArgumentException('Le compte source est requis pour un retrait.');
-        }
-
-        $compteSource = Compte::findOrFail($compteSourceId);
-
-        if ($compteSource->statut !== 'actif') {
-            throw new \InvalidArgumentException('Le compte source doit être actif.');
-        }
-
-        if ($compteSource->solde < $montant) {
-            throw new \InvalidArgumentException('Solde insuffisant sur le compte source.');
-        }
-    }
-
-    /**
-     * Validation pour transfert/virement
-     */
-    private function validateTransfert(?string $compteSourceId, ?string $compteDestinationId, float $montant): void
-    {
-        if (!$compteSourceId || !$compteDestinationId) {
-            throw new \InvalidArgumentException('Les comptes source et destination sont requis.');
-        }
-
-        $compteSource = Compte::findOrFail($compteSourceId);
-        $compteDestination = Compte::findOrFail($compteDestinationId);
-
-        if ($compteSource->statut !== 'actif' || $compteDestination->statut !== 'actif') {
-            throw new \InvalidArgumentException('Les comptes source et destination doivent être actifs.');
-        }
-
-        if ($compteSource->solde < $montant) {
-            throw new \InvalidArgumentException('Solde insuffisant sur le compte source.');
-        }
-
-        if ($compteSourceId === $compteDestinationId) {
-            throw new \InvalidArgumentException('Les comptes source et destination doivent être différents.');
-        }
-    }
-
-    /**
-     * Validation pour dépôt
-     */
-    private function validateDepot(?string $compteDestinationId): void
-    {
-        if (!$compteDestinationId) {
-            throw new \InvalidArgumentException('Le compte destination est requis pour un dépôt.');
-        }
-
-        $compteDestination = Compte::findOrFail($compteDestinationId);
-
-        if ($compteDestination->statut !== 'actif') {
-            throw new \InvalidArgumentException('Le compte destination doit être actif.');
-        }
-    }
 
     /**
      * Traiter une transaction (mise à jour des soldes)
@@ -119,15 +34,28 @@ class TransactionService
     }
 
     /**
-     * Créer une transaction avec validation et traitement
+     * Créer une transaction avec traitement
      */
     public function createTransaction(array $data): Transaction
     {
         DB::beginTransaction();
 
         try {
-            // Validation des règles métier
-            $this->validateBusinessRules($data);
+            // Validation des fonds suffisants pour retraits et transferts
+            if (in_array($data['type'], ['retrait', 'transfert', 'virement'])) {
+                $compteSource = \App\Models\Compte::findOrFail($data['compte_source_id']);
+                if (!$compteSource->peutDebiter($data['montant'])) {
+                    throw new \InvalidArgumentException('Fonds insuffisants ou compte inactif.');
+                }
+            }
+
+            // Validation du compte destination pour dépôts et transferts
+            if (in_array($data['type'], ['depot', 'transfert', 'virement'])) {
+                $compteDestination = \App\Models\Compte::findOrFail($data['compte_destination_id']);
+                if ($compteDestination->statut !== 'actif') {
+                    throw new \InvalidArgumentException('Compte destination inactif.');
+                }
+            }
 
             // Création de la transaction
             $transaction = Transaction::create([
