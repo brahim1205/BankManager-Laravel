@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
+    nginx \
+    supervisor \
     && docker-php-ext-install pdo pdo_pgsql pdo_sqlite bcmath mbstring \
     && rm -rf /var/lib/apt/lists/*
 
@@ -25,5 +27,9 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 # Donner les bons droits
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-EXPOSE 9000
-CMD ["php-fpm"]
+# Copier la configuration nginx
+COPY nginx/nginx.conf /etc/nginx/sites-available/default
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+EXPOSE 8000
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
