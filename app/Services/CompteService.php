@@ -35,6 +35,20 @@ class CompteService
                 'statut' => 'actif',
             ]);
 
+            // Créer une transaction de dépôt initial si le solde initial est positif
+            if ($data['soldeInitial'] > 0) {
+                $transactionService = app(\App\Services\TransactionService::class);
+                $transactionService->createTransaction([
+                    'type' => 'depot',
+                    'montant' => $data['soldeInitial'],
+                    'devise' => $data['devise'],
+                    'description' => 'Dépôt initial lors de la création du compte',
+                    'compte_destination_id' => $compte->id,
+                    'date_transaction' => now(),
+                    'statut' => 'validee',
+                ]);
+            }
+
             DB::commit();
 
             // Déclencher l'événement

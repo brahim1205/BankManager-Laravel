@@ -77,12 +77,12 @@ class TransactionModelTest extends TestCase
 
     public function test_transaction_scopes()
     {
-        Transaction::factory()->create(['statut' => 'validee']);
-        Transaction::factory()->create(['statut' => 'en_attente']);
-        Transaction::factory()->create(['type' => 'depot']);
-        Transaction::factory()->create(['type' => 'retrait']);
+        Transaction::factory()->create(['statut' => 'validee', 'type' => 'transfert']);
+        Transaction::factory()->create(['statut' => 'en_attente', 'type' => 'retrait']);
+        Transaction::factory()->create(['statut' => 'rejete', 'type' => 'depot']);
+        Transaction::factory()->create(['statut' => 'validee', 'type' => 'virement']);
 
-        $this->assertCount(1, Transaction::validees()->get());
+        $this->assertCount(2, Transaction::validees()->get());
         $this->assertCount(1, Transaction::enAttente()->get());
         $this->assertCount(1, Transaction::parType('depot')->get());
     }
@@ -137,6 +137,6 @@ class TransactionModelTest extends TestCase
     {
         $transaction = new Transaction();
 
-        $this->assertContains('HasUuids', class_uses_recursive($transaction));
+        $this->assertContains('Illuminate\Database\Eloquent\Concerns\HasUuids', class_uses_recursive($transaction));
     }
 }

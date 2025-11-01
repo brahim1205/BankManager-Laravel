@@ -28,7 +28,6 @@ class CompteFactory extends Factory
         };
 
         return [
-            'numero' => $prefix . '-' . strtoupper($this->faker->unique()->bothify('??????????')),
             'libelle' => $this->faker->randomElement([
                 'Compte Principal',
                 'Compte Épargne',
@@ -42,6 +41,7 @@ class CompteFactory extends Factory
             'date_ouverture' => $this->faker->dateTimeBetween('-5 years', 'now')->format('Y-m-d'),
             'statut' => $this->faker->randomElement(['actif', 'bloque', 'ferme']),
             'description' => $this->faker->optional(0.7)->sentence(),
+            'client_id' => \App\Models\Client::factory(), // Ajout du client_id
         ];
     }
 

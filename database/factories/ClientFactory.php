@@ -24,6 +24,7 @@ class ClientFactory extends Factory
             'telephone' => $this->faker->phoneNumber(),
             'adresse' => $this->faker->optional(0.7)->address(),
             'password' => bcrypt('password123'), // Mot de passe par défaut
+            'nci' => $this->faker->optional(0.8)->numerify('##########'), // Ajout du champ nci
         ];
     }
 }

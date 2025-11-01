@@ -27,6 +27,8 @@ class TransactionFactory extends Factory
             'description' => $this->faker->sentence(),
             'date_transaction' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'statut' => $this->faker->randomElement(['en_attente', 'validee', 'rejete']),
+            'compte_source_id' => \App\Models\Compte::factory(), // Ajout du compte_source_id
+            'compte_destination_id' => \App\Models\Compte::factory(), // Ajout du compte_destination_id
         ];
     }
 

@@ -28,6 +28,7 @@ class ClientModelTest extends TestCase
             'prenom' => 'Jean',
             'email' => 'jean.dupont@test.com',
             'telephone' => '+221771234567',
+            'password' => bcrypt('password123'), // Ajout du mot de passe requis
         ];
 
         $client = Client::create($data);
@@ -96,6 +97,6 @@ class ClientModelTest extends TestCase
     {
         $client = new Client();
 
-        $this->assertContains('HasUuids', class_uses_recursive($client));
+        $this->assertContains('Illuminate\Database\Eloquent\Concerns\HasUuids', class_uses_recursive($client));
     }
 }

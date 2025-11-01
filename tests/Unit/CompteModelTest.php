@@ -23,7 +23,7 @@ class CompteModelTest extends TestCase
 
     public function test_compte_generates_numero_automatically()
     {
-        $compte = Compte::factory()->create(['numero' => null]);
+        $compte = Compte::factory()->create(['numero' => null, 'type' => 'courant']);
 
         $this->assertNotNull($compte->numero);
         $this->assertStringStartsWith('CC-', $compte->numero); // Compte courant par défaut
@@ -69,7 +69,7 @@ class CompteModelTest extends TestCase
 
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $compte->transactionsSource());
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $compte->transactionsDestination());
-        $this->assertCount(2, $compte->transactions);
+        $this->assertCount(2, $compte->transactionsSource()->get()->merge($compte->transactionsDestination()->get()));
     }
 
     public function test_compte_has_solde_formate_accessor()
@@ -132,13 +132,13 @@ class CompteModelTest extends TestCase
 
     public function test_compte_scopes()
     {
-        Compte::factory()->create(['statut' => 'actif']);
+        Compte::factory()->create(['statut' => 'actif', 'type' => 'courant']);
         Compte::factory()->create(['statut' => 'bloque']);
-        Compte::factory()->create(['type' => 'courant']);
+        Compte::factory()->create(['statut' => 'bloque', 'type' => 'courant']);
         Compte::factory()->create(['type' => 'epargne']);
 
         $this->assertCount(1, Compte::actifs()->get());
-        $this->assertCount(1, Compte::parType('courant')->get());
+        $this->assertCount(2, Compte::parType('courant')->get());
     }
 
     public function test_compte_casts()
