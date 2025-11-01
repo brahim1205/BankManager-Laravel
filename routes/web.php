@@ -14,7 +14,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json([
+        'success' => true,
+        'message' => 'BankManager API - Bienvenue',
+        'data' => [
+            'name' => 'BankManager Laravel API',
+            'version' => '1.0.0',
+            'environment' => config('app.env'),
+            'documentation' => url('/api/documentation'),
+            'status_endpoint' => url('/api/v1/status'),
+        ],
+    ]);
 });
 
 // Route de connexion pour éviter l'erreur du middleware
