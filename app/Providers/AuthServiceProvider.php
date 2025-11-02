@@ -25,5 +25,11 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         // Passport routes are now defined manually in routes/api.php
+
+        // Configure Passport
+        Passport::tokensExpireIn(now()->addDays(15));
+        Passport::refreshTokensExpireIn(now()->addDays(30));
+        Passport::personalAccessTokensExpireIn(now()->addMonths(6));
+        Passport::hashClientSecrets();
     }
 }
