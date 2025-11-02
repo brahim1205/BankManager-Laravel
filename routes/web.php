@@ -19,11 +19,11 @@ Route::get('/', function () {
         'name' => 'BankManager API',
         'version' => '1.0.0',
         'environment' => app()->environment(),
-        'documentation' => 'https://bankmanager-laravel-1.onrender.com/api/documentation',
+        'documentation' => 'https://bankmanager-laravel.onrender.com/docs',
         'endpoints' => [
-            'api' => 'https://bankmanager-laravel-1.onrender.com/api/v1',
-            'documentation' => 'https://bankmanager-laravel-1.onrender.com/api/documentation',
-            'oauth' => 'https://bankmanager-laravel-1.onrender.com/api/oauth'
+            'api' => 'https://bankmanager-laravel.onrender.com/api/v1',
+            'documentation' => 'https://bankmanager-laravel.onrender.com/docs',
+            'oauth' => 'https://bankmanager-laravel.onrender.com/api/oauth'
         ]
     ]);
 });
