@@ -66,7 +66,7 @@ class AuthController extends Controller
         $user = Auth::user();
 
         // Générer un token Passport
-        $token = $user->createToken('API Token')->accessToken;
+        $token = $user->createToken('API Token')->plainTextToken;
 
         return $this->successResponse([
             'user' => $user,
@@ -153,7 +153,7 @@ class AuthController extends Controller
         $request->user()->token()->revoke();
 
         // Créer un nouveau token
-        $token = $user->createToken('API Token')->accessToken;
+        $token = $user->createToken('API Token')->plainTextToken;
 
         return $this->successResponse([
             'token' => $token,
