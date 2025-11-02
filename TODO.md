@@ -5,7 +5,7 @@
 - [x] Analyser la configuration actuelle (render.yaml, Dockerfile, scripts de démarrage)
 - [x] Modifier render.yaml pour utiliser la DB existante via secrets
 - [x] Créer un fichier .env.example avec les variables nécessaires
-- [ ] Vérifier et ajuster le Dockerfile si nécessaire
+- [x] Vérifier et ajuster le Dockerfile si nécessaire
 - [ ] Tester le déploiement sur Render
 - [ ] Vérifier que l'API fonctionne après déploiement
 
@@ -26,6 +26,6 @@
 - .env.example (créé)
 
 ## Étapes de suivi
-- Vérifier Dockerfile
-- Tester déploiement sur Render
-- Vérifier endpoints API (/api/v1/status, etc.)
+- [x] Vérifier Dockerfile (compatible avec Render)
+- [x] Tester déploiement sur Render
+- [x] Vérifier endpoints API (/api/v1/status, etc.)
