@@ -24,6 +24,9 @@ php artisan migrate --force
 echo "🌱 Exécution des seeders..."
 php artisan db:seed --force
 
+echo "🔐 Installation de Laravel Passport..."
+php artisan passport:install --force
+
 echo "📚 Génération de la documentation Swagger..."
 php artisan l5-swagger:generate
 
