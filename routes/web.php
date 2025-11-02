@@ -13,9 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Redirect root to API documentation
+// Return API information for root URL
 Route::get('/', function () {
-    return redirect('/api/documentation');
+    return response()->json([
+        'name' => 'BankManager API',
+        'version' => '1.0.0',
+        'environment' => app()->environment(),
+        'documentation' => url('/api/documentation'),
+        'endpoints' => [
+            'api' => url('/api/v1'),
+            'documentation' => url('/api/documentation'),
+            'oauth' => url('/api/oauth')
+        ]
+    ]);
 });
 
 // Route de connexion pour éviter l'erreur du middleware
