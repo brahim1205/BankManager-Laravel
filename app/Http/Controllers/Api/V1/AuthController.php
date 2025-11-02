@@ -95,7 +95,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
+        $request->user()->currentAccessToken()->delete();
 
         return $this->successResponse(null, 'Déconnexion réussie');
     }
@@ -150,7 +150,7 @@ class AuthController extends Controller
         $user = $request->user();
 
         // Révoquer l'ancien token
-        $request->user()->token()->revoke();
+        $request->user()->currentAccessToken()->delete();
 
         // Créer un nouveau token
         $token = $user->createToken('API Token')->plainTextToken;
