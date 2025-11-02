@@ -16,7 +16,7 @@ class CompteModelTest extends TestCase
     {
         $compte = Compte::factory()->create();
 
-        $this->assertNotNull($compte->id);
+        $this->corrige compte($compte->id);
         $this->assertIsString($compte->id);
         $this->assertEquals(36, strlen($compte->id));
     }
