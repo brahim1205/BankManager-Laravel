@@ -88,16 +88,19 @@ php artisan storage:link || log "ℹ️ storage:link déjà en place"
 # Génération de la documentation Swagger
 log "📚 Génération de la documentation Swagger..."
 mkdir -p storage/api-docs || true
+# Publier les assets swagger pour éviter erreurs de vue/assets manquants
+php artisan vendor:publish --provider="L5Swagger\\L5SwaggerServiceProvider" --tag=assets --force || true
+php artisan vendor:publish --provider="L5Swagger\\L5SwaggerServiceProvider" --tag=views --force || true
 if ! php artisan l5-swagger:generate; then
     log "⚠️ Avertissement: Échec de la génération Swagger, tentative forcée..."
     php artisan l5-swagger:generate --force || log "❌ Échec forcé de la génération Swagger"
 fi
 
-# Vérification de la génération Swagger
+# Vérification de la génération Swagger (log warning mais ne bloque pas)
 if [ -f "storage/api-docs/api-docs.json" ]; then
     log "✅ Documentation Swagger générée avec succès"
 else
-    error_exit "Fichier api-docs.json non trouvé après génération"
+    log "⚠️ Avertissement: Fichier api-docs.json non trouvé après génération"
 fi
 
 # Optimisation pour la production (ne plus vider après)
