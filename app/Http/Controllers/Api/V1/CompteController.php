@@ -22,11 +22,6 @@ use Illuminate\Http\JsonResponse;
  *     description="API de gestion bancaire avec comptes et transactions"
  * )
  *
- * @OA\Server(
- *     url="http://127.0.0.1:8000/api/v1",
- *     description="Serveur de développement"
- * )
- *
  * @OA\SecurityScheme(
  *     securityScheme="bearerAuth",
  *     type="http",
@@ -726,8 +721,8 @@ class CompteController extends Controller
  *
  * @OA\Schema(
  *     schema="PaginationLinks",
- *     @OA\Property(property="first", type="string", example="http://127.0.0.1:8000/api/v1/comptes?page=1"),
- *     @OA\Property(property="last", type="string", example="http://127.0.0.1:8000/api/v1/comptes?page=5"),
+ *     @OA\Property(property="first", type="string", example="https://bankmanager-laravel.onrender.com/api/v1/comptes?page=1"),
+ *     @OA\Property(property="last", type="string", example="https://bankmanager-laravel.onrender.com/api/v1/comptes?page=5"),
  *     @OA\Property(property="prev", type="string", nullable=true),
  *     @OA\Property(property="next", type="string", nullable=true)
  * )
