@@ -16,6 +16,12 @@ error_exit() {
 
 log "🚀 Démarrage de BankManager API sur Render..."
 
+# Préparation des permissions nécessaires
+log "🔒 Préparation des permissions (storage, cache)..."
+mkdir -p storage/framework/{cache,sessions,views} storage/logs storage/api-docs bootstrap/cache || true
+chown -R www-data:www-data storage bootstrap/cache || true
+chmod -R 775 storage bootstrap/cache || true
+
 # Générer la clé d'application si elle n'existe pas
 if [ -z "${APP_KEY:-}" ]; then
     log "🔑 Génération de la clé d'application..."
@@ -25,6 +31,13 @@ if [ -z "${APP_KEY:-}" ]; then
 else
     log "🔑 Clé d'application déjà définie"
 fi
+
+# Nettoyage préalable des caches (avant optimisation)
+log "🧹 Nettoyage initial des caches..."
+php artisan cache:clear || true
+php artisan config:clear || true
+php artisan route:clear || true
+php artisan view:clear || true
 
 # Attendre que la base de données soit prête avec timeout et retries
 log "⏳ Attente de la base de données..."
@@ -64,26 +77,30 @@ if ! php artisan passport:install --force; then
     error_exit "Échec de l'installation de Passport"
 fi
 
-# Vérification des clés Passport
-log "🔍 Vérification des clés Passport..."
-PASSPORT_CHECK=$(php artisan tinker --execute="echo 'OAuth clients: ' . \Laravel\Passport\Client::count() . ', OAuth access tokens: ' . \Laravel\Passport\Token::count();" 2>/dev/null || echo "Erreur vérification Passport")
-log "$PASSPORT_CHECK"
+# Génération des clés Passport si nécessaire
+log "🔐 Vérification/rafraîchissement des clés Passport..."
+php artisan passport:keys --force || log "⚠️ Avertissement: Échec du rafraîchissement des clés Passport"
+
+# Lien de stockage public
+log "🔗 Création du lien de stockage (storage:link)..."
+php artisan storage:link || log "ℹ️ storage:link déjà en place"
 
 # Génération de la documentation Swagger
 log "📚 Génération de la documentation Swagger..."
+mkdir -p storage/api-docs || true
 if ! php artisan l5-swagger:generate; then
-    log "⚠️ Avertissement: Échec de la génération Swagger, continuation..."
+    log "⚠️ Avertissement: Échec de la génération Swagger, tentative forcée..."
+    php artisan l5-swagger:generate --force || log "❌ Échec forcé de la génération Swagger"
 fi
 
 # Vérification de la génération Swagger
 if [ -f "storage/api-docs/api-docs.json" ]; then
     log "✅ Documentation Swagger générée avec succès"
 else
-    log "⚠️ Fichier api-docs.json non trouvé, génération manuelle..."
-    php artisan l5-swagger:generate --force || log "❌ Échec forcé de la génération Swagger"
+    error_exit "Fichier api-docs.json non trouvé après génération"
 fi
 
-# Optimisation pour la production
+# Optimisation pour la production (ne plus vider après)
 log "🔧 Optimisation pour la production..."
 if ! php artisan config:cache; then
     error_exit "Échec du cache de configuration"
@@ -94,14 +111,6 @@ fi
 if ! php artisan view:cache; then
     error_exit "Échec du cache des vues"
 fi
-
-# Nettoyage étendu du cache
-log "🧹 Nettoyage étendu du cache..."
-php artisan cache:clear || log "⚠️ Avertissement: Échec du nettoyage du cache"
-php artisan config:clear || log "⚠️ Avertissement: Échec du nettoyage de la config"
-php artisan route:clear || log "⚠️ Avertissement: Échec du nettoyage des routes"
-php artisan view:clear || log "⚠️ Avertissement: Échec du nettoyage des vues"
-php artisan passport:keys --force || log "⚠️ Avertissement: Échec du rafraîchissement des clés Passport"
 
 # Contrôle de santé avant démarrage
 log "🏥 Contrôle de santé de l'application..."
