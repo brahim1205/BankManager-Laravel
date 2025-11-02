@@ -19,11 +19,11 @@ Route::get('/', function () {
         'name' => 'BankManager API',
         'version' => '1.0.0',
         'environment' => app()->environment(),
-        'documentation' => url('/api/documentation'),
+        'documentation' => '/api/documentation',
         'endpoints' => [
-            'api' => url('/api/v1'),
-            'documentation' => url('/api/documentation'),
-            'oauth' => url('/api/oauth')
+            'api' => '/api/v1',
+            'documentation' => '/api/documentation',
+            'oauth' => '/api/oauth'
         ]
     ]);
 });
