@@ -17,28 +17,37 @@ class RequestLoggerMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = auth()->user();
-        $ip = $request->ip();
-        $userId = $user ? $user->id : 'guest';
+        try {
+            $user = auth()->user();
+            $ip = $request->ip();
+            $userId = $user ? $user->id : 'guest';
 
-        // Clé de cache pour compter les requêtes par jour
-        $cacheKey = "requests:{$userId}:{$ip}:" . now()->format('Y-m-d');
+            // Clé de cache pour compter les requêtes par jour
+            $cacheKey = "requests:{$userId}:{$ip}:" . now()->format('Y-m-d');
 
-        // Incrémenter le compteur
-        $requestCount = Cache::increment($cacheKey);
+            // Incrémenter le compteur avec gestion d'erreur
+            $requestCount = Cache::increment($cacheKey);
 
-        // Définir l'expiration à la fin de la journée
-        Cache::put($cacheKey, $requestCount, now()->endOfDay());
+            // Définir l'expiration à la fin de la journée
+            Cache::put($cacheKey, $requestCount, now()->endOfDay());
 
-        // Logger si plus de 10 requêtes par jour
-        if ($requestCount > 10) {
-            Log::warning("Utilisateur {$userId} ({$ip}) a fait {$requestCount} requêtes aujourd'hui", [
-                'user_id' => $userId,
-                'ip' => $ip,
-                'request_count' => $requestCount,
+            // Logger si plus de 10 requêtes par jour
+            if ($requestCount > 10) {
+                Log::warning("Utilisateur {$userId} ({$ip}) a fait {$requestCount} requêtes aujourd'hui", [
+                    'user_id' => $userId,
+                    'ip' => $ip,
+                    'request_count' => $requestCount,
+                    'url' => $request->fullUrl(),
+                    'method' => $request->method(),
+                    'user_agent' => $request->userAgent(),
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Logger l'erreur mais ne pas bloquer la requête
+            Log::error("Erreur dans RequestLoggerMiddleware: " . $e->getMessage(), [
                 'url' => $request->fullUrl(),
                 'method' => $request->method(),
-                'user_agent' => $request->userAgent(),
+                'ip' => $request->ip(),
             ]);
         }
 

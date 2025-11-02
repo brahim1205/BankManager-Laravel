@@ -122,7 +122,7 @@ Route::prefix('v1')->group(function () {
     |
     */
 
-    Route::middleware(['auth:api', LoggingMiddleware::class, 'request.logger'])->group(function () {
+    Route::middleware(['auth:api', LoggingMiddleware::class])->group(function () {
         /**
          * Lister tous les comptes
          *

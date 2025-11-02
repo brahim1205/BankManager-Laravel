@@ -39,5 +39,11 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+echo "🧹 Nettoyage du cache..."
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
 echo "✅ Application prête ! Démarrage de Supervisord..."
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
