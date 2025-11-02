@@ -27,6 +27,10 @@ php artisan db:seed --force
 echo "🔐 Installation de Laravel Passport..."
 php artisan passport:install --force
 
+# Vérifier que les clés Passport ont été créées
+echo "🔍 Vérification des clés Passport..."
+php artisan tinker --execute="echo 'OAuth clients: ' . \Laravel\Passport\Client::count(); echo 'OAuth access tokens: ' . \Laravel\Passport\Token::count();"
+
 echo "📚 Génération de la documentation Swagger..."
 php artisan l5-swagger:generate
 
