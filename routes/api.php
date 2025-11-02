@@ -18,6 +18,30 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// OAuth Routes for Laravel Passport v12
+Route::prefix('oauth')->group(function () {
+    Route::get('/authorize', [Laravel\Passport\Http\Controllers\AuthorizationController::class, 'authorize'])->middleware(['web', 'auth']);
+    Route::post('/authorize', [Laravel\Passport\Http\Controllers\ApproveAuthorizationController::class, 'approve'])->middleware(['web', 'auth']);
+    Route::delete('/authorize', [Laravel\Passport\Http\Controllers\DenyAuthorizationController::class, 'deny'])->middleware(['web', 'auth']);
+
+    Route::post('/token', [Laravel\Passport\Http\Controllers\AccessTokenController::class, 'issueToken'])->middleware(['throttle']);
+    Route::post('/token/refresh', [Laravel\Passport\Http\Controllers\TransientTokenController::class, 'refresh'])->middleware(['throttle']);
+
+    Route::get('/tokens', [Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController::class, 'forUser'])->middleware(['auth']);
+    Route::delete('/tokens/{token_id}', [Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController::class, 'destroy'])->middleware(['auth']);
+
+    Route::get('/clients', [Laravel\Passport\Http\Controllers\ClientController::class, 'forUser'])->middleware(['auth']);
+    Route::post('/clients', [Laravel\Passport\Http\Controllers\ClientController::class, 'store'])->middleware(['auth']);
+    Route::put('/clients/{client_id}', [Laravel\Passport\Http\Controllers\ClientController::class, 'update'])->middleware(['auth']);
+    Route::delete('/clients/{client_id}', [Laravel\Passport\Http\Controllers\ClientController::class, 'destroy'])->middleware(['auth']);
+
+    Route::get('/scopes', [Laravel\Passport\Http\Controllers\ScopeController::class, 'all']);
+
+    Route::get('/personal-access-tokens', [Laravel\Passport\Http\Controllers\PersonalAccessTokenController::class, 'forUser'])->middleware(['auth']);
+    Route::post('/personal-access-tokens', [Laravel\Passport\Http\Controllers\PersonalAccessTokenController::class, 'store'])->middleware(['auth']);
+    Route::delete('/personal-access-tokens/{token_id}', [Laravel\Passport\Http\Controllers\PersonalAccessTokenController::class, 'destroy'])->middleware(['auth']);
+});
+
 // Routes d'authentification publiques (supprimées car déplacées dans v1)
 
 // API Version 1
