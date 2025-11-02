@@ -75,6 +75,14 @@ if ! php artisan l5-swagger:generate; then
     log "⚠️ Avertissement: Échec de la génération Swagger, continuation..."
 fi
 
+# Vérification de la génération Swagger
+if [ -f "storage/api-docs/api-docs.json" ]; then
+    log "✅ Documentation Swagger générée avec succès"
+else
+    log "⚠️ Fichier api-docs.json non trouvé, génération manuelle..."
+    php artisan l5-swagger:generate --force || log "❌ Échec forcé de la génération Swagger"
+fi
+
 # Optimisation pour la production
 log "🔧 Optimisation pour la production..."
 if ! php artisan config:cache; then
