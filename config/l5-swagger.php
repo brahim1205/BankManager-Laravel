@@ -21,6 +21,11 @@ return [
                 'use_absolute_path' => env('L5_SWAGGER_USE_ABSOLUTE_PATH', true),
 
                 /*
+                 * Swagger UI dist folder
+                 */
+                'swagger_ui_dist_url' => env('L5_SWAGGER_UI_DIST_URL', 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.7.2'),
+
+                /*
                 * Edit to set path where swagger ui assets should be stored
                 */
                 'swagger_ui_assets_path' => env('L5_SWAGGER_UI_ASSETS_PATH', 'vendor/swagger-api/swagger-ui/dist/'),

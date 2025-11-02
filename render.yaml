@@ -48,3 +48,5 @@ services:
           type: web
           name: bankmanager-api
           property: host
+      - key: L5_SWAGGER_UI_DIST_URL
+        value: https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.7.2
