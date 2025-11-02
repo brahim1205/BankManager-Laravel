@@ -1,66 +1,31 @@
-# TODO: Préparer le projet BankManager pour le déploiement sur Render
+# Préparation du projet Laravel BankManager pour le déploiement sur Render
 
-## Analyse du projet
-- **Framework**: Laravel 10 avec PHP 8.3
-- **Base de données**: PostgreSQL (déjà configurée dans render.yaml)
-- **Déploiement**: Docker avec Nginx + PHP-FPM + Supervisord
-- **API**: RESTful avec authentification Passport
-- **Documentation**: Swagger (l5-swagger)
+## Étapes à suivre
 
-## État actuel
-- ✅ Dockerfile optimisé pour production
-- ✅ render.yaml configuré avec health check (/api/v1/status)
-- ✅ Script de démarrage docker/render-start.sh avec migrations et seeders
-- ✅ Nginx configuré sur port 8000 (cohérent avec EXPOSE)
-- ✅ Health check endpoint fonctionnel
+- [x] Analyser la configuration actuelle (render.yaml, Dockerfile, scripts de démarrage)
+- [x] Modifier render.yaml pour utiliser la DB existante via secrets
+- [x] Créer un fichier .env.example avec les variables nécessaires
+- [ ] Vérifier et ajuster le Dockerfile si nécessaire
+- [ ] Tester le déploiement sur Render
+- [ ] Vérifier que l'API fonctionne après déploiement
 
-## Tâches à effectuer
+## Informations recueillies
+- Le projet utilise Laravel avec PostgreSQL
+- Configuration Docker existante avec Nginx, PHP-FPM et Supervisord
+- Script de démarrage docker/render-start.sh gère migrations, seeders, Passport, etc.
+- DB existante sur Render à utiliser via secrets
 
-### 1. Variables d'environnement
-- [ ] Créer/mettre à jour .env.production avec les bonnes valeurs pour Render
-- [ ] S'assurer que DB_CONNECTION=pgsql
-- [ ] Configurer APP_URL dynamique via Render
-- [ ] Définir MAIL_MAILER=log pour production
+## Plan
+- **render.yaml** : Modifier pour utiliser DB existante via secrets (DB_HOST, DB_PORT, etc. fromSecret)
+- **.env.example** : Créer avec variables d'environnement nécessaires pour Render
+- **Dockerfile** : Vérifier compatibilité (utilise PHP 8.3, extensions nécessaires)
+- **docker/render-start.sh** : Déjà optimisé pour production
 
-### 2. Optimisations production
-- [ ] Vérifier que les commandes d'optimisation sont dans le script de démarrage
-- [ ] S'assurer que les dépendances dev sont exclues en production
+## Fichiers dépendants à éditer
+- render.yaml (modifié)
+- .env.example (créé)
 
-### 3. Base de données
-- [ ] Les migrations sont présentes (16 fichiers)
-- [ ] Seeders configurés pour créer des données de test
-- [ ] Configuration PostgreSQL correcte
-
-### 4. Sécurité
-- [ ] Vérifier que .env n'est pas commité
-- [ ] S'assurer que les clés sensibles sont dans les variables Render
-
-### 5. Tests et validation
-- [ ] Tester le health check endpoint
-- [ ] Vérifier que les migrations s'exécutent correctement
-
-## Commandes de déploiement
-```bash
-# Build et push vers Render
-render deploy
-
-# Ou via CLI si installé
-gh repo create bankmanager-api --public --source=. --remote=origin --push
-```
-
-## Variables d'environnement Render requises
-- APP_NAME=BankManager
-- APP_ENV=production
-- APP_DEBUG=false
-- DB_CONNECTION=pgsql
-- DB_HOST= (fourni par Render DB)
-- DB_PORT=5432
-- DB_DATABASE=bankmanager
-- DB_USERNAME=bankmanager_user
-- DB_PASSWORD= (fourni par Render DB)
-- APP_KEY= (généré automatiquement)
-- MAIL_MAILER=log
-- QUEUE_CONNECTION=database
-- L5_SWAGGER_USE_ABSOLUTE_PATH=true
-- APP_URL= (fourni par Render)
-- L5_SWAGGER_BASE_PATH= (fourni par Render)
+## Étapes de suivi
+- Vérifier Dockerfile
+- Tester déploiement sur Render
+- Vérifier endpoints API (/api/v1/status, etc.)

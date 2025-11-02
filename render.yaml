@@ -17,6 +17,16 @@ services:
         value: false
       - key: DB_CONNECTION
         value: pgsql
+      - key: DB_HOST
+        fromSecret: db_host
+      - key: DB_PORT
+        fromSecret: db_port
+      - key: DB_DATABASE
+        fromSecret: db_database
+      - key: DB_USERNAME
+        fromSecret: db_username
+      - key: DB_PASSWORD
+        fromSecret: db_password
       - key: L5_SWAGGER_USE_ABSOLUTE_PATH
         value: true
       - key: MAIL_MAILER
@@ -33,9 +43,3 @@ services:
           type: web
           name: bankmanager-api
           property: host
-
-databases:
-  - name: bankmanager-db
-    databaseName: bankmanager
-    user: bankmanager_user
-    plan: starter

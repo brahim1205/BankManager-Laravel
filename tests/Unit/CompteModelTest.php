@@ -133,7 +133,7 @@ class CompteModelTest extends TestCase
     public function test_compte_scopes()
     {
         Compte::factory()->create(['statut' => 'actif', 'type' => 'courant']);
-        Compte::factory()->create(['statut' => 'bloque']);
+        Compte::factory()->create(['statut' => 'bloque', 'type' => 'epargne']);
         Compte::factory()->create(['statut' => 'bloque', 'type' => 'courant']);
         Compte::factory()->create(['type' => 'epargne']);
 
